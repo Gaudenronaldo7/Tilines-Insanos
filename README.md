@@ -32,7 +32,3 @@ graph TD
 
 
 
-1. Clone this repository.
-2. Install the requirements:
-   ```bash
-   pip install pandas streamlit folium streamlit-folium osmnx google-generativeai
