@@ -1,0 +1,21 @@
+# Grafo vial cacheado -- pesa varios MB y se regenera solo en el primer run
+*.graphml
+
+# Reportes generados por el botón de Gemini
+reporte_turno_seed_*.txt
+
+# Event logs exportados
+event_log_seed_*.jsonl
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Editor / SO
+.vscode/
+.DS_Store
