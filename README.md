@@ -1,3 +1,6 @@
+Holaaa. Aquí verán todo lo que se hizo sjsjsj
+
+```mermaid
 graph TD
     %% Configuración Inicial
     A[Inicio: app.py] --> B(Fijar Semilla / Determinismo)
