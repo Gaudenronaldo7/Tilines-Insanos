@@ -1,4 +1,4 @@
-# 🚗 DynaRoute: Data-Driven Courier Routing
+# DynaRoute: Data-Driven Courier Routing
 **Built by team Tilines Insanos for HackMTY**
 
 DynaRoute is a high-performance, deterministic simulation engine that replaces a courier's intuition with hard mathematical logic. It calculates the true profitability of every trip in milliseconds, optimizing earnings and reducing fuel waste.
