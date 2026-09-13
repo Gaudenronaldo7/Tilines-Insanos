@@ -1,35 +1,33 @@
-Holaaa. Aquí verán todo lo que se hizo sjsjsj
-
 ```mermaid
 graph TD
-    %% Configuración Inicial
-    A[Inicio: app.py] --> B(Fijar Semilla / Determinismo)
-    B --> C[(Cargar Grafo OSMnx en Caché)]
+    %% Initial Configuration
+    A[Start: app.py] --> B(Set Seed / Determinism)
+    B --> C[(Load OSMnx Graph to Cache)]
     
-    %% Bucle de Simulación
-    C --> D{¿Juez pide nueva orden?}
-    D -- Sí --> E[simulador_pedidos.py]
-    E -->|Genera Origen, Destino, Pago, Surge| F[rutamonterrey.py]
+    %% Simulation Loop
+    C --> D{User requests new order?}
+    D -- Yes --> E[simulador_pedidos.py]
+    E -->|Generates Origin, Dest, Payout, Surge| F[rutamonterrey.py]
     
-    %% Motor de Decisión
-    F -->|Calcula Ruta y Tiempos| G[Motor Lógico EPUT]
-    G --> H{¿EPUT >= Umbral?}
+    %% Decision Engine
+    F -->|Calculates Route & Times| G[EPUT Decision Engine]
+    G --> H{EPUT >= Threshold?}
     
-    %% Bifurcación de Agentes
-    H -- Sí --> I[Agente Acepta: Suma MXN, Km, actualiza Mapa]
-    H -- No --> J[Agente Rechaza: Evita pérdida]
-    G -->|Novato acepta siempre| K[Novato: Suma MXN, Km, actualiza Mapa]
+    %% Agent Bifurcation
+    H -- Yes --> I[Smart Agent Accepts: Adds MXN, Km, Updates Map]
+    H -- No --> J[Smart Agent Rejects: Avoids Loss]
+    G -->|Rookie always accepts| K[Rookie: Adds MXN, Km, Updates Map]
     
-    %% Interfaz y Logs
-    I --> L[Actualizar Mini-Dashboard en Streamlit]
+    %% UI and Logging
+    I --> L[Update Streamlit Mini-Dashboard]
     J --> L
     K --> L
-    L --> M(Guardar evento en DataFrame Pandas)
+    L --> M(Save Event in Pandas DataFrame)
     M --> D
     
-    %% Fase de Cierre y Auditoría
-    D -- Fin del Turno --> N{Botón: Generar Reporte}
-    N --> O[API Gemini 3.6-flash analiza telemetría]
-    O --> P[Métricas: Tokens, Costo MXN y Tiempo]
-    P --> Q[Guardar reporte_seed.txt Offline]
-    P --> R[Exportar event_log.jsonl validado]
+    %% Auditing and Closing Phase
+    D -- End of Shift --> N{Button: Generate Report}
+    N --> O[Gemini 3.6-flash API Analyzes Telemetry]
+    O --> P[Metrics: Tokens, MXN Cost, Time]
+    P --> Q[Save reporte_seed.txt Offline]
+    P --> R[Export validated event_log.jsonl]
