@@ -15,32 +15,40 @@ We built an **Earnings Per Unit of Time (EPUT)** engine that calculates real-wor
 ## 🗺️ System Architecture
 
 ```mermaid
-graph TD
-    %% Initial Configuration
-    A[Start: app.py] --> B(Set Seed / Determinism)
-    B --> C[(Load OSMnx Graph to Cache)]
-    
-    %% Simulation Loop
-    C --> D{User requests new order?}
-    D -- Yes --> E[simulador_pedidos.py]
-    E -->|Generates Origin, Dest, Payout, Surge| F[rutamonterrey.py]
-    
-    %% NEW: Dynamic Decision Engine
-    F -->|Calculates Route & Times| G[EPUT Decision Engine]
-    G --> G2{Market Surge Active?}
-    G2 -- Yes --> G3[Smart Agent: Threshold x 1.5]
-    G2 -- No --> G4[Smart Agent: Normal Threshold]
-    
-    %% Agent Bifurcation
-    G3 --> H{Yield >= Dynamic Threshold?}
-    G4 --> H
-    H -- Yes --> I[Smart Agent Accepts]
-    H -- No --> J[Smart Agent Rejects: Avoids Loss]
-    G -->|Rookie always accepts| K[Rookie Accepts]
-    
-    %% UI and Auditing
-    I --> L[Update Streamlit Dashboard]
-    J --> L
-    K --> L
-    L --> M[Save Event to Pandas]
-    M --> N{Shift Ends: Export JSONL & Gemini Report}
+flowchart TD
+    A["App arranca"] --> B["Se carga el grafo vial de Monterrey<br/>(cacheado con st.cache_resource)"]
+    B --> C{"Acción del usuario"}
+    C -->|"Simular 1 pedido"| D["Generar 1 pedido"]
+    C -->|"Simular 5 pedidos"| E["Generar pedidos uno por uno<br/>(try/except: si uno falla, sigue con el resto)"]
+    C -->|"Despachar lote"| F["Despachar manualmente el lote<br/>pendiente del Agente"]
+
+    D --> N
+    E --> N
+
+    subgraph N ["Por cada pedido nuevo"]
+        direction LR
+
+        subgraph NOV ["🚶 Novato"]
+            N1["¿Existe ruta física<br/>hasta origen y destino?"] -->|"No"| N2["Rechazar:<br/>inaccesible"]
+            N1 -->|"Sí"| N3["Despachar YA, solo<br/>(sin encadenar)"]
+            N3 --> N4["+ganancia, +km, +tiempo"]
+        end
+
+        subgraph AGT ["🤖 Agente Inteligente"]
+            A1{"¿Lote lleno?<br/>(3/3 pedidos)"} -->|"Sí"| A2["Auto-despachar<br/>el lote actual primero"]
+            A1 -->|"No"| A3
+            A2 --> A3["optimizar_ruta(lote actual)<br/>vs<br/>optimizar_ruta(lote + candidato)"]
+            A3 --> A4["Δ Utilidad = ingreso extra − gasolina extra<br/>Tasa marginal = Δ Utilidad / Δ tiempo × 60"]
+            A4 --> A5{"Δ Utilidad > 0 Y<br/>tasa ≥ tasa de reserva?"}
+            A5 -->|"Sí"| A6["Sumar al lote pendiente<br/>(no se despacha todavía)"]
+            A5 -->|"No"| A7["Rechazar + razón en texto"]
+        end
+    end
+
+    N4 --> H
+    A6 --> H
+    A7 --> H
+    F --> H
+
+    H["Actualizar métricas:<br/>$/hora, $/km, batch rate,<br/>tamaño de lote promedio"] --> I
+    I["Renderizar dashboard:<br/>mapas en vivo · panel de decisión ·<br/>panel de lote activo · comparativa · historial"]
